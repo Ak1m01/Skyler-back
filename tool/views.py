@@ -5,6 +5,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 import json
 from django.http import JsonResponse, HttpResponseBadRequest
+from .models import UserProfile, TechStack
+import uuid
+from time import sleep
 
 def index(request):
     return JsonResponse({"message": "Hello, world!"})
@@ -14,11 +17,8 @@ def login_view(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            username = data.get('username')
+            username = data.get('email')
             password = data.get('password')
-
-            if not username or not password:
-                return JsonResponse({"error": "Username and password are required"}, status=400)
 
             user = authenticate(request, username=username, password=password)
             if user is not None:
@@ -40,19 +40,10 @@ def signup(request):
             username = data.get('username')
             email = data.get('email')
             password = data.get('password')
-            confirm_password = data.get('confirm_password')
-
-            if not username:
-                return JsonResponse({"error": "Username is required"}, status=400)
-            if not email:
-                return JsonResponse({"error": "Email is required"}, status=400)
-            if not password or not confirm_password:
-                return JsonResponse({"error": "Password and confirm password are required"}, status=400)
-            if password != confirm_password:
-                return JsonResponse({"error": "Passwords do not match"}, status=400)
 
             user = User.objects.create_user(username=username, email=email, password=password)
-            return JsonResponse({"message": "User created successfully"}, status=201)
+            user.save()
+            return JsonResponse({"message": "User created successfully"}, status=200)
 
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON"}, status=400)
@@ -61,4 +52,56 @@ def signup(request):
     
 def signout(request):
     logout(request)
-    return JsonResponse({"message": "Signout successful"})
+    return JsonResponse({"message": "Signout successful"}, status=200)
+
+def form(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            first_name = data.get('first_name')
+            last_name = data.get('last_name')
+            fathers_name = data.get('fathers_name')
+            sex = data.get('sex')
+            birth_date = data.get('birth_date')
+            phone_number = data.get('phone_number')
+            country = data.get('country')
+            city = data.get('city')
+            role = data.get('role')
+            bin = data.get('bin')
+            education = data.get('education')
+            institution = data.get('institution')
+            specialization = data.get('specialization')
+            tech_stack = data.get('tech_stack')
+
+            user = request.user
+
+            user_profile = UserProfile.objects.create(
+                user=user,
+                id=uuid.uuid4(),
+                first_name=first_name,
+                last_name=last_name,
+                fathers_name=fathers_name,
+                sex=sex,
+                birth_date=birth_date,
+                phone_number=phone_number,
+                country=country,
+                city=city,
+                role=role,
+                bin=bin,
+                education=education,
+                institution=institution,
+                specialization=specialization,
+                tech_stack=tech_stack
+            )
+
+            user_profile.save()
+
+            return JsonResponse({"message": "Profile created successfully"}, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+    else:
+        return HttpResponseBadRequest("Invalid request method")
+    
+def techstacks(request):
+    tech_stacks = list(TechStack.objects.all().values('id', 'name'))
+    return JsonResponse({"tech_stacks": tech_stacks}, status=200)
