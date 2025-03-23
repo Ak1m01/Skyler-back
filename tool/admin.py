@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserProfile, TechStack, Job, Company, Application, Chat
+from .models import UserProfile, TechStack, Job, Company, Application
 
 admin.site.register(UserProfile)
 admin.site.register(TechStack)

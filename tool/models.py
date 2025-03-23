@@ -8,29 +8,29 @@ class UserProfile(models.Model):
     )
     id = models.CharField(max_length=100, primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=100, blank=True)
-    last_name = models.CharField(max_length=100, blank=True)
-    fathers_name = models.CharField(max_length=100, blank=True)
-    phone_number = models.CharField(max_length=15, blank=True)
-    role = models.CharField(max_length=10, choices=USER_ROLE_CHOICES)
-    tech_stack = models.ManyToManyField('TechStack')
-    experience = models.IntegerField()
-    company_name = models.CharField(max_length=100, blank=True)
-    bank_account = models.CharField(max_length=100, blank=True)
-    rating = models.FloatField()
-    bio = models.TextField(blank=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True)
+    first_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100, blank=True, null=True)
+    fathers_name = models.CharField(max_length=100, blank=True, null=True)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    role = models.CharField(max_length=10, choices=USER_ROLE_CHOICES, blank=True, null=True)
+    tech_stack = models.ManyToManyField('TechStack', blank=True)
+    experience = models.IntegerField(blank=True, null=True)
+    company_name = models.CharField(max_length=100, blank=True, null=True)
+    bank_account = models.CharField(max_length=100, blank=True, null=True)
+    rating = models.FloatField(blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     date_of_birth = models.DateField(null=True, blank=True)
-    country = models.CharField(max_length=100, blank=True)
-    city = models.CharField(max_length=100, blank=True)
-    resume = models.TextField(blank=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    resume = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    sex = models.CharField(max_length=10, blank=True)
-    bin = models.CharField(max_length=12, blank=True)
-    education = models.CharField(max_length=100, blank=True)
-    institution = models.CharField(max_length=100, blank=True)
-    specialization = models.CharField(max_length=100, blank=True)
+    sex = models.CharField(max_length=10, blank=True, null=True)
+    bin = models.CharField(max_length=12, blank=True, null=True)
+    education = models.CharField(max_length=100, blank=True, null=True)
+    institution = models.CharField(max_length=100, blank=True, null=True)
+    specialization = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -38,39 +38,84 @@ class UserProfile(models.Model):
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
     
-    
-class TechStack(models.Model):
-    name = models.CharField(max_length=100)
+class Links(models.Model):
+    link = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.link
+    
+class Company(models.Model):
+    name = models.CharField(max_length=100, blank=True, null=True)
+    industry = models.CharField(max_length=100, blank=True, null=True)
+    num_of_employees = models.IntegerField(blank=True, null=True)
+    location = models.CharField(max_length=100, blank=True, null=True)
+    contact_person = models.CharField(max_length=100, blank=True, null=True)
+    contact_person_position = models.CharField(max_length=100, blank=True, null=True)
+    contact_person_full_name = models.CharField(max_length=100, blank=True, null=True)
+    contact_person_phone_number = models.CharField(max_length=15, blank=True, null=True)
+    contact_person_email = models.EmailField(blank=True, null=True)
+    bin_of_company = models.CharField(max_length=12, blank=True, null=True)
+    link = models.ManyToManyField('Links', blank=True)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+    
+class EducationalInstitution(models.Model):
+    name = models.CharField(max_length=100, blank=True, null=True)
+    institution_type = models.CharField(max_length=100, blank=True, null=True)
+    location = models.CharField(max_length=100, blank=True, null=True)
+    contact_person_full_name = models.CharField(max_length=100, blank=True, null=True)
+    contact_person_position = models.CharField(max_length=100, blank=True, null=True)
+    contact_person_phone_number = models.CharField(max_length=15, blank=True, null=True)
+    contact_person_email = models.EmailField(blank=True, null=True)
+    bin_of_institution = models.CharField(max_length=12, blank=True, null=True)
+    link = models.URLField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+    
+class PrivateEmployer(models.Model):
+    name = models.CharField(max_length=100, blank=True, null=True)
+    surname = models.CharField(max_length=100, blank=True, null=True)
+    fathers_name = models.CharField(max_length=100, blank=True, null=True)
+    sex = models.CharField(max_length=10, blank=True, null=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    location = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.name} {self.surname}'
+    
+class TechStack(models.Model):
+    name = models.CharField(max_length=100, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
     
 class Job(models.Model):
     id = models.CharField(max_length=100, primary_key=True)
-    title = models.CharField(max_length=100)
-    description = models.TextField()
-    company = models.ForeignKey('Company', on_delete=models.CASCADE)
-    location = models.CharField(max_length=100)
-    salary = models.FloatField()
-    tech_stack = models.ForeignKey('TechStack', on_delete=models.CASCADE)
+    title = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    company = models.ForeignKey('Company', on_delete=models.CASCADE, blank=True, null=True)
+    location = models.CharField(max_length=100, blank=True, null=True)
+    salary = models.FloatField(blank=True, null=True)
+    tech_stack = models.ForeignKey('TechStack', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
-    
-class Company(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    location = models.CharField(max_length=100)
-    logo = models.ImageField(upload_to='company_logos/', blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name
     
 class Application(models.Model):
     STATUS_CHOICES = (
@@ -80,43 +125,12 @@ class Application(models.Model):
         ('completed', 'Completed'),
     )
     id = models.CharField(max_length=100, primary_key=True)
-    job = models.ForeignKey('Job', on_delete=models.CASCADE)
-    candidate = models.ForeignKey('UserProfile', on_delete=models.CASCADE)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    job = models.ForeignKey('Job', on_delete=models.CASCADE, blank=True, null=True)
+    candidate = models.ForeignKey('UserProfile', on_delete=models.CASCADE, blank=True, null=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, blank=True, null=True)
     is_paid = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.id
-    
-class Review(models.Model):
-    id = models.CharField(max_length=100, primary_key=True)
-    worker = models.ForeignKey('UserProfile', related_name='worker_reviews', on_delete=models.CASCADE)
-    employer = models.ForeignKey('UserProfile', related_name='employer_reviews', on_delete=models.CASCADE)
-    rating = models.FloatField()
-    comment = models.TextField(default='')
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.id
-    
-class Chat(models.Model):
-    id = models.CharField(max_length=100, primary_key=True)
-    sender = models.ForeignKey('UserProfile', related_name='sent_chats', on_delete=models.CASCADE)
-    receiver = models.ForeignKey('UserProfile', related_name='received_chats', on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.sender.user.username + ' -> ' + self.receiver.user.username
-    
-class Message(models.Model):
-    id = models.CharField(max_length=100, primary_key=True)
-    chat = models.ForeignKey('Chat', on_delete=models.CASCADE)
-    sender = models.ForeignKey('UserProfile', related_name='sent_messages', on_delete=models.CASCADE)
-    receiver = models.ForeignKey('UserProfile', related_name='received_messages', on_delete=models.CASCADE)
-    content = models.TextField()
-    is_read = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)

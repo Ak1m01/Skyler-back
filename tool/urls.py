@@ -17,7 +17,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from . import views
-from .add_views import add
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -26,4 +25,5 @@ urlpatterns = [
     path('signout/', views.signout, name='signout'),
     path('form/', views.form, name='form'),
     path('techstacks/', views.techstacks, name='techstacks'),
+    path('info/', views.info, name='info'),
 ]
