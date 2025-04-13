@@ -26,4 +26,6 @@ urlpatterns = [
     path('form/', views.form, name='form'),
     path('techstacks/', views.techstacks, name='techstacks'),
     path('info/', views.info, name='info'),
+    path('get-csrf-token/', views.get_csrf_token, name='getcsrf'),
+    path('vacancy/', views.vacancy, name='vacancy'),
 ]

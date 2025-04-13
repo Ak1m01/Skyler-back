@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 import json
 from django.http import JsonResponse, HttpResponseBadRequest
-from .models import UserProfile, TechStack, Company, Links, EducationalInstitution, PrivateEmployer
+from .models import UserProfile, TechStack, Company, Links, PrivateEmployer, Vacancy
 import uuid
 from time import sleep
 
@@ -204,3 +204,53 @@ def info(request):
         return JsonResponse({"error": "Invalid JSON"}, status=400)
     else:
         return HttpResponseBadRequest("Invalid request method")
+    
+
+
+def vacancy(request):
+    if request.method == 'GET':
+        vacancies = list(Vacancy.objects.all().values('id', 'name', 'position', 'experience', 'salary', 'compensation', 'skills', 'responsibilities', 'deadline', 'work_conditions'))
+        return JsonResponse({"vacancies": vacancies}, status=200)
+    if request.method == 'POST':
+        try:
+            id = uuid.uuid4()
+            data = json.loads(request.body)
+            name = data.get('name')
+            position = data.get('position')
+            experience = data.get('experience')
+            salary = data.get('salary')
+            compensation = data.get('compensation')
+            skills = data.get('skills')
+            responsibilities = data.get('responsibilities')
+            deadline = data.get('deadline')
+            work_conditions = data.get('work_conditions')
+            
+            vacancy = Vacancy.objects.create(
+                id=id,
+                name=name,
+                position=position,
+                experience=experience,
+                salary=salary,
+                compensation=compensation,
+                skills=skills,
+                responsibilities=responsibilities,
+                deadline=deadline,
+                work_conditions=work_conditions
+            )
+            vacancy.save()
+
+            return JsonResponse({"message": "Vacancy created successfully"}, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+    else:
+        return HttpResponseBadRequest("Invalid request method")
+
+from django.http import JsonResponse
+from django.middleware.csrf import get_token
+
+def get_csrf_token(request):
+    """
+    Возвращает CSRF-токен клиенту.
+    """
+    csrf_token = get_token(request)
+    return JsonResponse({'csrfToken': csrf_token})    

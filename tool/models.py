@@ -65,23 +65,6 @@ class Company(models.Model):
     def __str__(self):
         return self.name
     
-class EducationalInstitution(models.Model):
-    name = models.CharField(max_length=100, blank=True, null=True)
-    institution_type = models.CharField(max_length=100, blank=True, null=True)
-    location = models.CharField(max_length=100, blank=True, null=True)
-    contact_person_full_name = models.CharField(max_length=100, blank=True, null=True)
-    contact_person_position = models.CharField(max_length=100, blank=True, null=True)
-    contact_person_phone_number = models.CharField(max_length=15, blank=True, null=True)
-    contact_person_email = models.EmailField(blank=True, null=True)
-    bin_of_institution = models.CharField(max_length=12, blank=True, null=True)
-    link = models.URLField(blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name
-    
 class PrivateEmployer(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     surname = models.CharField(max_length=100, blank=True, null=True)
@@ -103,19 +86,21 @@ class TechStack(models.Model):
     def __str__(self):
         return self.name
     
-class Job(models.Model):
+    
+class Vacancy(models.Model):
     id = models.CharField(max_length=100, primary_key=True)
-    title = models.CharField(max_length=100, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-    company = models.ForeignKey('Company', on_delete=models.CASCADE, blank=True, null=True)
-    location = models.CharField(max_length=100, blank=True, null=True)
-    salary = models.FloatField(blank=True, null=True)
-    tech_stack = models.ForeignKey('TechStack', on_delete=models.CASCADE, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    name = models.CharField(max_length=100, blank=True, default="Unknown")
+    position = models.CharField(max_length=100, blank=True, null=True)
+    experience = models.IntegerField(blank=True, null=True)
+    skills = models.CharField(max_length=100, blank=True, null=True)
+    responsibilities = models.TextField(blank=True, null=True)
+    deadline = models.DateTimeField(blank=True, null=True)
+    salary = models.IntegerField(blank=True, null=True)
+    compensation = models.IntegerField(blank=True, null=True)
+    work_conditions = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.title
+        return self.position
     
 class Application(models.Model):
     STATUS_CHOICES = (
@@ -125,7 +110,7 @@ class Application(models.Model):
         ('completed', 'Completed'),
     )
     id = models.CharField(max_length=100, primary_key=True)
-    job = models.ForeignKey('Job', on_delete=models.CASCADE, blank=True, null=True)
+    Vacancy = models.ForeignKey('Vacancy', on_delete=models.CASCADE, blank=True, null=True)
     candidate = models.ForeignKey('UserProfile', on_delete=models.CASCADE, blank=True, null=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, blank=True, null=True)
     is_paid = models.BooleanField(default=False)
