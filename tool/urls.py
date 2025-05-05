@@ -20,7 +20,8 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('get-csrf-token/', views.get_csrf_token, name='get_csrf_token'),
     path('login/', views.login_view, name='login'),
-    path('signup/', views.signup, name='signup'),
-    path('signout/', views.signout, name='signout'),
+    path('logout/', views.logout_view, name='logout'),
+    path('signup/', views.register_view, name='register'),
 ]
